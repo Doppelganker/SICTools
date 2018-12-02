@@ -1,6 +1,7 @@
 Second		START	0
 		JSUB	stackinit
 		LDS	#10
+		LDA	#0
 
 readloop	RD	readin
 		COMP	newline
@@ -15,7 +16,7 @@ readloop	RD	readin
 
 
 next		RMO	T, A
-		JSUB	fact
+		JSUB	fib
 		RMO	A, T
 
 		. izpis
@@ -56,7 +57,7 @@ end		J	end
 
 . faktoriela
 fact		COMP	#1
-		JEQ	exit
+		JEQ	factend
 
 		STL	@stackptr
 		JSUB	stackpush
@@ -76,7 +77,47 @@ fact		COMP	#1
 		JSUB	stackpop
 		LDL	@stackptr
 
-exit		RSUB
+factend		RSUB
+
+. fibonaci
+fib		COMP	#0
+		JEQ	fibend
+
+		COMP	#1
+		JEQ	fibend
+
+		STL	@stackptr
+		JSUB	stackpush
+
+		STA	@stackptr
+		JSUB	stackpush
+
+		SUB	#1
+		JSUB	fib
+
+		RMO	A, T
+
+		JSUB	stackpop
+		LDA	@stackptr
+
+		STT	@stackptr
+		JSUB	stackpush
+
+		SUB	#2
+		JSUB	fib
+
+		JSUB	stackpop
+		LDT	@stackptr
+
+		ADDR	T, A
+		STA	result
+
+		JSUB	stackpop
+		LDL	@stackptr
+
+
+fibend		RSUB
+
 
 
 . stackinit
